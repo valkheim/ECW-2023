@@ -1,0 +1,105 @@
+# ECW ransomware recovery challenge
+
+John Doe got his backup server hacked. John is broke, help him recover his data.
+
+Find a way to recover the hackers private key.
+
+# Steps
+
+1. Explore the server archive and recover a first flag
+2. Find the ty'conti domain used for infection
+3. Recover your data, a flag is hidden within
+
+
+## Scenario
+
+Evil corp installed a malware on John's backup server. That malware is listening for a NUKE order on UDP/9999. When received, it verifies the origin of the request using a DGA and encrypts backup files. It then deletes the symmetric key but leaves an encrypted key for later recovery. Finally, it rewrites the bootleader with a ransom note and reboots.
+
+We are John's friend and our task is to retrieve the secret key for backup files decryption. We have to reverse the malware (we can also restore the bootloader) in order to find the domain name used while the attack was launched. Luckily, we find the ransomware gang panel and from there we find the key and decrypt John's key and files in order to reveal the flag.
+
+## Build instructions
+
+First, build the cnc/implant softwares, generate crypto stuff with:
+
+```
+code/$ ./make.sh
+```
+
+note: you might need musl
+
+Then create the john backup (I'm using a backup here):
+
+```
+image/$ 7z x alpine.qcow2.7z
+image/$ ./50-boot.sh &
+```
+
+note: you might need to install qemu
+
+At that point you should have an alpine linux and an ssh access for root:root on TCP/5555.
+
+You can now push all the stuff to the backup server
+
+```
+image/$ ./60-push-files.sh
+code/implant$ make send
+```
+
+On the backup server you should now have:
+
+```
+localhost:~# ls /root
+implant  key      key.bin
+localhost:~# cat /etc/hosts
+127.0.0.1       localhost.my.domain localhost localhost.localdomain localhost
+::1             localhost localhost.localdomain
+10.0.2.2 uxigxmxvm.bzh
+```
+
+and on the control panel:
+
+```
+$ head -n2 code/cnc/server/code/files/nGQ9xF84C/key.pem 
+-----BEGIN PRIVATE KEY-----
+MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCdU3ZPd9Jj/G2A
+```
+
+Perfect, now we can start the attack. One one end, launch the implant:
+
+```
+$ cd code/implant
+code/implant/$ make run
+```
+
+And on the other end, send the NUKE message:
+
+```
+$ cd code/cnc/send_order
+code/cnc/send_order$ ./cnc 127.0.0.0 9999 NUKE
+Send command NUKE
+```
+
+You should now be able to read the ransom notice on your qemu window.
+The alpine image is ready to be given to challengers.
+
+Save the machine for the challenger:
+
+```
+image/$ qemu-img convert -f qcow2 -O raw alpine.qcow2 infected.img
+image/$ mv infected.img ../writeup
+writeup$ tar czvf infected.tgz infected.img
+writeup$ git add infected.tgz 
+```
+
+Now let's start the cnc panel. It must be reachable at the domain name generated the day of the attack. You can find it in your logs or regenerate it using the dga helper:
+
+```
+code/implant$ ./dga
+uxigxmxvm.bzh
+```
+
+To start the cnc panel, use the docker-compose at code/cnc/server/docker-compose.yml
+
+You should be able to access a private key at `localhost/files/nGQ9xF84C/key.pem`.
+
+That key will be used to decrypt the primary key. You will then be able to decrypt John's files.

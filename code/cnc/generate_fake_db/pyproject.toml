@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "generate-fake-db"
+version = "0.1.0"
+description = ""
+authors = ["user < >"]
+readme = "README.md"
+packages = [{include = "generate_fake_db"}]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+fake2db = "^0.5.4"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

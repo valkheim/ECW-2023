@@ -1,0 +1,9 @@
+@font-face {
+    font-family: 'PremierLeaguewithLionNumbers';
+    src: url('fonts/PremierLeaguewithLionNumbers.eot');
+    src: url('fonts/PremierLeaguewithLionNumbers.eot') format('embedded-opentype'),
+         url('fonts/PremierLeaguewithLionNumbers.woff2') format('woff2'),
+         url('fonts/PremierLeaguewithLionNumbers.woff') format('woff'),
+         url('fonts/PremierLeaguewithLionNumbers.ttf') format('truetype'),
+         url('fonts/PremierLeaguewithLionNumbers.svg#PremierLeaguewithLionNumbers') format('svg');
+}

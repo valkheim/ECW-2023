@@ -1,0 +1,15 @@
+# Bootlocker
+
+Locks boot and display a ransom note with client id `nGQ9xF84C`.
+
+## Features
+
+* wipes the partition tables
+* displays the usual ransom note
+* gives a ransom unique identifier
+
+## TODO
+
+* [ ] add random wallet id, personnal id
+* [ ] funny partition table
+* [ ] randomize the rest

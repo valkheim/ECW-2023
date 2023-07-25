@@ -1,0 +1,4 @@
+```console
+$ make
+$ ./cnc 0.0.0.0 9999 NUKE
+```

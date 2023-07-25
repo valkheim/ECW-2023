@@ -1,0 +1,20 @@
+version: '3'
+
+services:
+  web:
+    image: nginx:latest
+    ports:
+      - "80:80"
+    volumes:
+      # Push the website code
+      - ./code:/code
+      # Override default nginx configuration with ours
+      - ./site.conf:/etc/nginx/conf.d/default.conf
+    links:
+      - php
+
+  php:
+    # Our Faker 3rd party won't support php8
+    image: php:7-fpm
+    volumes:
+      - ./code:/code

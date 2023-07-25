@@ -1,0 +1,13 @@
+https://wiki.alpinelinux.org/wiki/Install_Alpine_in_QEMU
+
+setup-alpine
+setup-keymap fr fr
+yes | setup-disk -m sys /dev/sda
+mkdir /boot
+mkinitfs -o /boot/initramfs-virt $(uname -r)
+mkinitfs -o /boot/initramfs $(uname -r)
+vim /etc/ssh/sshd_config
+PermitRootLogin yes
+PasswordAuthentication yes
+/etc/init.d/sshd restart
+reboot
